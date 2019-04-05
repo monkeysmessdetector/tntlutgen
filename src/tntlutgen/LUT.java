@@ -4,7 +4,7 @@ public class LUT {
 
     public static final int BITS_IGNORED = 38; //39 will likely also guarantee 100% success rate. This number must be larger than 22
 
-    public static long getUpperSeedBound(int detectorId) {
+    public static long getLUTValue(int detectorId) {
         double upperAngle = getUpperAngleBound(detectorId);
         // long upperSeed = (long) (upperAngle / (2 * Math.PI) * 0x1.0p26) << (48 - 26);
         // upperSeed |= ((1L << (BITS_IGNORED)) - 1);

@@ -9,13 +9,15 @@ public class EchoLUT {
 
         long largestDifference = 0;
 
-        long lastSeed = 0;
+        long lowerBound = 0;
         for (int detectorId = 0; detectorId < Detector.detectors.size(); detectorId++) {
-            long seed = LUT.getUpperSeedBound(detectorId);
-            System.out.printf("%03d: %s%n", detectorId, MessMath.toBinaryString(seed));
-            if (seed - lastSeed > largestDifference)
-                largestDifference = seed - lastSeed;
-            lastSeed = seed;
+            long upperBound = LUT.getLUTValue(detectorId);
+            System.out.printf("%03d: %s%n", detectorId, MessMath.toBinaryString(upperBound));
+            upperBound = (upperBound << LUT.BITS_IGNORED) | ((1L << LUT.BITS_IGNORED) - 1);
+            System.out.println(Math.log(upperBound) / Math.log(2) + " " + Math.log(lowerBound) / Math.log(2));
+            if (upperBound - lowerBound > largestDifference)
+                largestDifference = upperBound - lowerBound;
+            lowerBound = upperBound & ~((1L << LUT.BITS_IGNORED) - 1);
         }
         System.out.println("Largest difference: " + largestDifference);
         System.out.println("Log of that: " + Math.log(largestDifference) / Math.log(2));

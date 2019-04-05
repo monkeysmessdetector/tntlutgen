@@ -13,7 +13,7 @@ public class ReversalTest {
         Detector.generateDetectorCircle();
         long[] lut = new long[Detector.detectors.size()];
         for (int i = 0; i < lut.length; i++)
-            lut[i] = LUT.getUpperSeedBound(i);
+            lut[i] = LUT.getLUTValue(i);
 
         final long a = 0x97be9f880aa9L;
         final long b = 0xeac471130bcaL;

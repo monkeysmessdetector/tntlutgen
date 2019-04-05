@@ -2,7 +2,7 @@ package tntlutgen;
 
 public class TntSimulator {
 
-    public static double initialHeight = 26;
+    public static double initialHeight = 18;
     public static int launchTntCount = 7;
     private static final double FLOOR_HEIGHT = 0.875 - 1;
 
