@@ -2,8 +2,8 @@ package tntlutgen;
 
 public class TntSimulator {
 
-    public static double initialHeight;
-    public static int launchTntCount;
+    public static double initialHeight = 26;
+    public static int launchTntCount = 7;
     private static final double FLOOR_HEIGHT = 0.875 - 1;
 
     public static int getDetectorOutput(double angle) {

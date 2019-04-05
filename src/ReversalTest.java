@@ -10,8 +10,6 @@ import java.util.*;
 public class ReversalTest {
 
     public static void main(String[] args) {
-        TntSimulator.initialHeight = 26;
-        TntSimulator.launchTntCount = 7;
         Detector.generateDetectorCircle();
         long[] lut = new long[Detector.detectors.size()];
         for (int i = 0; i < lut.length; i++)

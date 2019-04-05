@@ -53,7 +53,7 @@ public class MessMath {
 
     public static String toBinaryString(long l) {
         StringBuilder str = new StringBuilder(Long.toBinaryString(l));
-        while (str.length() < 48)
+        while (str.length() < 10)
             str.insert(0, "0");
         return str.toString();
     }
