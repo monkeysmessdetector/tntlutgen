@@ -46,7 +46,7 @@ public class TntSimulator {
         tnt.vy += dy * multiplier * launchTntCount;
         tnt.vz += dz * multiplier * launchTntCount;
 
-        for (int i = 0; i < 80 - 29; i++) {
+        for (int i = 0; i < 80 - 29 - 1; i++) {
             double minX = tnt.x - 0.49, maxX = tnt.x + 0.49;
             double minZ = tnt.z - 0.49, maxZ = tnt.z + 0.49;
             boolean offDispenser = maxX < 0 || minX > 1 || maxZ < 0 || minZ > 1;
