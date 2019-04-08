@@ -9,12 +9,17 @@ public class DetectorFunctionGenerator {
 
         Detector.generateDetectorCircle();
 
+        System.out.println("carpet newLight true");
+
+        for (Detector detector : Detector.detectors) {
+            System.out.printf("fill 0 %d %d %d %d %d sandstone%n", y-1, detector.z + (int)Math.signum(detector.z), detector.x, y-1, (int)Math.signum(detector.z));
+            System.out.printf("fill 0 %d %d %d %d %d snow_layer layers=8%n", y, detector.z + (int)Math.signum(detector.z), detector.x, y, (int)Math.signum(detector.z));
+        }
+
         for (int i = 0; i < Detector.detectors.size(); i++) {
             Detector detector = Detector.detectors.get(i);
             System.out.println("# Detector " + i);
-            System.out.printf("fill 0 %d %d %d %d %d ender_chest%n", y, detector.z + (int)Math.signum(detector.z), detector.x, y, (int)Math.signum(detector.z));
             System.out.printf("fill %d %d %d %d %d %d ender_chest%n", detector.x - 1, y, detector.z - 1, detector.x + 1, y, detector.z + 1);
-            System.out.printf("setblock %d %d %d ender_chest%n", detector.x, y, detector.z);
             System.out.printf("setblock %d %d %d tripwire%n", detector.x, y + 1, detector.z);
             System.out.printf("setblock %d %d %d observer facing=down%n", detector.x, y + 2, detector.z);
             System.out.printf("setblock %d %d %d sandstone%n", detector.x, y + 3, detector.z);
@@ -29,14 +34,7 @@ public class DetectorFunctionGenerator {
             System.out.printf("setblock %d %d %d chain_command_block facing=up,conditional=true replace {auto:1b,Command:\"scoreboard players set @e[tag=detectorLock] detectorId %d\"}%n", detector.x, y + 10, detector.z, i);
         }
 
-        Detector.detectors.clear();
-        TntSimulator.launchTntCount--;
-        Detector.generateDetectorCircle();
-
-        System.out.println("# NO LAG PLZ!!!");
-        for (Detector detector : Detector.detectors) {
-            System.out.printf("fill 0 %d %d %d %d %d air%n", y, detector.z + (int) Math.signum(detector.z), detector.x, y, (int) Math.signum(detector.z));
-        }
+        System.out.println("carpet newLight false");
     }
 
 }
