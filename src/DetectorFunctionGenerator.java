@@ -1,6 +1,8 @@
 import tntlutgen.Detector;
-import tntlutgen.LUT;
 import tntlutgen.TntSimulator;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DetectorFunctionGenerator {
 
@@ -22,19 +24,31 @@ public class DetectorFunctionGenerator {
             System.out.printf("fill %d %d %d %d %d %d ender_chest%n", detector.x - 1, y, detector.z - 1, detector.x + 1, y, detector.z + 1);
             System.out.printf("setblock %d %d %d tripwire%n", detector.x, y + 1, detector.z);
             System.out.printf("setblock %d %d %d observer facing=down%n", detector.x, y + 2, detector.z);
-            System.out.printf("setblock %d %d %d sandstone%n", detector.x, y + 3, detector.z);
-            long upperBound = LUT.getLUTValue(i);
-            System.out.printf("fill %d %d %d %d %d %d stone%n", detector.x, y + 4, detector.z, detector.x, y + 10, detector.z);
-            System.out.printf("setblock %d %d %d command_block facing=up replace {Command:\"testfor @e[tag=detectorLock,score_detectorId%s=%d]\"}%n", detector.x, y + 4, detector.z, i == Detector.detectors.size() - 1 ? "" : "_min", (i+1) % Detector.detectors.size());
-            System.out.printf("setblock %d %d %d chain_command_block facing=up replace {auto:1b,Command:\"testforblock ~ ~-1 ~ command_block * {SuccessCount:0}\"}%n", detector.x, y + 5, detector.z);
-            System.out.printf("setblock %d %d %d chain_command_block facing=up,conditional=true replace {auto:1b,Command:\"testfor @e[tag=detectorsActive]\"}%n", detector.x, y + 6, detector.z);
-            System.out.printf("setblock %d %d %d chain_command_block facing=up,conditional=true replace {auto:1b,Command:\"scoreboard players set lut messConstants %d\"}%n", detector.x, y + 7, detector.z, upperBound);
-            System.out.printf("setblock %d %d %d chain_command_block facing=up,conditional=true replace {auto:1b,Command:\"scoreboard players set lutLast messConstants %d\"}%n", detector.x, y + 8, detector.z, LUT.getLUTValue((i==0 ? Detector.detectors.size()-1 : i-1)));
-            System.out.printf("setblock %d %d %d chain_command_block facing=up,conditional=true replace {auto:1b,Command:\"summon area_effect_cloud ~ ~ ~ {Tags:[\\\"detectorLock\\\"]}\",Duration:2147483647}%n", detector.x, y + 9, detector.z);
-            System.out.printf("setblock %d %d %d chain_command_block facing=up,conditional=true replace {auto:1b,Command:\"scoreboard players set @e[tag=detectorLock] detectorId %d\"}%n", detector.x, y + 10, detector.z, i);
+            String facing = getFacing(detector);
+            System.out.printf("setblock %d %d %d golden_rail shape=%s%n", detector.x, y + 3, detector.z, facing.equals("north") || facing.equals("south") ? "north_south" : "east_west");
         }
 
         System.out.println("carpet newLight false");
+    }
+
+    private static Map<String, String> oppositeFacing = new HashMap<>();
+    static {
+        oppositeFacing.put("north", "south");
+        oppositeFacing.put("south", "north");
+        oppositeFacing.put("west", "east");
+        oppositeFacing.put("east", "west");
+    }
+
+    private static String getFacing(Detector detector) {
+        double angle = Math.atan2(-detector.x, -detector.z);
+        if (angle >= 0.25 * Math.PI && angle < 0.75 * Math.PI)
+            return "west";
+        else if (angle >= 0.75 * Math.PI && angle < 1.25 * Math.PI)
+            return "south";
+        else if (angle >= 1.25 * Math.PI && angle < 1.75 * Math.PI)
+            return "east";
+        else
+            return "north";
     }
 
 }
