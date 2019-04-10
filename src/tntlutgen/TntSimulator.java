@@ -1,5 +1,9 @@
 package tntlutgen;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
+
 public class TntSimulator {
 
     public static double initialHeight = 18;
@@ -7,16 +11,28 @@ public class TntSimulator {
     private static final double FLOOR_HEIGHT = 0.875 - 1;
 
     public static int getDetectorOutput(double angle) {
-        TntEntity tnt = simulateTntLaunch(angle);
+        Set<Detector> activatedDetectors = new HashSet<>();
+        TntEntity finalTnt = simulateTntLaunch(angle, tnt -> {
+            double minX = tnt.x - 0.49 + 0.001, maxX = tnt.x + 0.49 - 0.001;
+            double minZ = tnt.z - 0.49 + 0.001, maxZ = tnt.z + 0.49 - 0.001;
+            for (Detector detector : Detector.detectors) {
+                boolean intersects = minX < detector.x + 1 && maxX >= detector.x && minZ < detector.z + 1 && maxZ >= detector.z;
+                if (intersects)
+                    activatedDetectors.add(detector);
+            }
+        });
+        double minX = finalTnt.x - 0.49 + 0.001, maxX = finalTnt.x + 0.49 - 0.001;
+        double minZ = finalTnt.z - 0.49 + 0.001, maxZ = finalTnt.z + 0.49 - 0.001;
+        for (Detector detector : Detector.detectors) {
+            boolean intersects = minX < detector.x + 1 && maxX >= detector.x && minZ < detector.z + 1 && maxZ >= detector.z;
+            if (intersects)
+                activatedDetectors.add(detector);
+        }
 
         int detectorId = 0;
         boolean foundDetector = false;
         while (true) {
-            double minX = tnt.x - 0.49 + 0.001, maxX = tnt.x + 0.49 - 0.001;
-            double minZ = tnt.z - 0.49 + 0.001, maxZ = tnt.z + 0.49 - 0.001;
-            Detector detector = Detector.detectors.get(detectorId);
-            boolean intersects = minX < detector.x + 1 && maxX >= detector.x && minZ < detector.z + 1 && maxZ >= detector.z;
-            if (intersects)
+            if (activatedDetectors.contains(Detector.detectors.get(detectorId)))
                 foundDetector = true;
             else if (foundDetector)
                 return detectorId == 0 ? Detector.detectors.size() - 1 : detectorId - 1;
@@ -26,6 +42,10 @@ public class TntSimulator {
 
     // Simulates TNT being fired upwards from a dispenser at (0.5, initialHeight, 0.5) and being blasted by launchTntCount TNT
     public static TntEntity simulateTntLaunch(double initialAngle) {
+        return simulateTntLaunch(initialAngle, tnt -> {});
+    }
+
+    public static TntEntity simulateTntLaunch(double initialAngle, Consumer<TntEntity> tickHandler) {
         TntEntity tnt = new TntEntity();
         tnt.x = 0.5;
         tnt.y = initialHeight;
@@ -34,8 +54,10 @@ public class TntSimulator {
         tnt.vy = 0.2;
         tnt.vz = -Math.cos(initialAngle) * 0.02;
 
-        for (int i = 0; i < 29; i++)
+        for (int i = 0; i < 29; i++) {
+            tickHandler.accept(tnt);
             tnt.update(initialHeight);
+        }
 
         double dx = tnt.x - 0.5;
         double dy = -0.98/16;
@@ -50,6 +72,7 @@ public class TntSimulator {
             double minX = tnt.x - 0.49, maxX = tnt.x + 0.49;
             double minZ = tnt.z - 0.49, maxZ = tnt.z + 0.49;
             boolean offDispenser = maxX < 0 || minX > 1 || maxZ < 0 || minZ > 1;
+            tickHandler.accept(tnt);
             tnt.update(offDispenser ? FLOOR_HEIGHT : initialHeight);
         }
 
