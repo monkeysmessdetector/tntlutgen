@@ -17,9 +17,8 @@ public class ReversalTest {
 
         final long a = 0x97be9f880aa9L;
         final long b = 0xeac471130bcaL;
-        // final long[] bvec = {-27656690254670940L, -8487796951449621L, 6587028370136042L, 15308787416636229L, -19938768618496968L, -11963740464960064L, -33031215471443596L};
-        final long[] bvec = {-100614,-30878,23964,55694,-72536,-43523,-120166};
-        final long[] m6 = {0xff7392795dd6L, 0x1184f9b300L, 0xff79d1d659aeL, 0xff62f08153d5L, 0xfe64fe5e8622L, 0x24beb7ecc11L, 0x30c38f7adcL};
+        final long[] bvec = {-71942 ,32610, 14748, 46478, -23384, 34301, -116070};
+        final long[] m6 = {200379505784862L, 109233788106496L, 84844885213974L, 37699456995249L, 39206040217722L, 63870693550397L, 281003457836972L};
         final long[][] mm1 = {
                 {-26, -81, -16, 50, 14, 22, -76},
                 {-117, 4, -42, -45, -20, -61, -32},
@@ -72,10 +71,6 @@ public class ReversalTest {
             //System.out.println(Arrays.toString(bvec));
             //System.out.println(Arrays.toString(penultimateVector));
             long seed = MessMath.dot(m6, penultimateVector);
-            for (int j = 0; j < 1; j++) {
-                //seed = ((seed - 0xbL) * 0xdfe05bcb1365L) & 0xffffffffffffL;
-                seed = (seed * 0x5deece66dL + 0xbL) & 0xffffffffffffL;
-            }
 
             if (MessMath.circularDiff(seed, MessMath.getSeed(rand)) != 0) {
                 failcount+=1;
