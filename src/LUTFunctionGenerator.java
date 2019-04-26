@@ -20,8 +20,7 @@ public class LUTFunctionGenerator {
                 x = detector.x;
                 z = 147 * dz;
             }
-            placeValue(x, 40, z, dx, dz, LUT.getLUTValue(detectorId));
-            placeValue(x, 49, z, dx, dz, LUT.getLUTValue(detectorId == 0 ? Detector.detectors.size() - 1 : detectorId - 1));
+            placeValue(x, 40, z, dx, dz, LUT.getLUTValue(detectorId == 0 ? Detector.detectors.size() - 1 : detectorId - 1));
         }
     }
 
