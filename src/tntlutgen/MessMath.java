@@ -7,36 +7,18 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class MessMath {
 
-    public static BigInteger toBigInt48(long n) {
-        if ((n & 0x800000000000L) != 0)
-            return BigInteger.valueOf(n | 0xffff000000000000L);
-        else
-            return BigInteger.valueOf(n & 0xffffffffffffL);
-        //return BigInteger.valueOf(n);
-    }
-
-    public static BigInteger dotBig(long[] v, long[][] mat, int col) {
-        BigInteger result = BigInteger.ZERO;
+    public static NBitNumber dotColumn(NBitNumber[] v, NBitNumber[][] mat, int col, int bits) {
+        NBitNumber result = new NBitNumber(0, bits);
         for (int i = 0; i < v.length; i++) {
-            result = result.add(BigInteger.valueOf(v[i]).multiply(toBigInt48(mat[i][col])));
+            result = result.add(v[i], bits).mul(mat[i][col], bits);
         }
         return result;
     }
 
-    public static long dot(long[] a, long[] b) {
-        long result = 0;
+    public static NBitNumber dot(NBitNumber[] a, NBitNumber[] b, int outBits) {
+        NBitNumber result = new NBitNumber(0, outBits);
         for (int i = 0; i < a.length; i++)
-            result += a[i] * b[i];
-        return result;
-    }
-
-    public static long[] matmult(long[] vec, long[][] mat) {
-        long[] result = new long[mat.length];
-        for (int i = 0; i < mat.length; i++) {
-            for (int j = 0; j < mat.length; j++) {
-                result[i] += vec[j] * mat[j][i];
-            }
-        }
+            result = result.add(a[i].mul(b[i], outBits), outBits);
         return result;
     }
 
