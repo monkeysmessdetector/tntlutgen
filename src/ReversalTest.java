@@ -75,7 +75,7 @@ public class ReversalTest {
                 // Although we're using 24-bit val before the shift, in reality it's 21-bit which means we can
                 // test the whole of the top hex digit after the shift for negativity.
                 if ((val.val & 0xf000) != 0) // is val negative?
-                    val = new NBitNumber(0xffff_ffff_0000L | val.val, 48); // handle signed right shift
+                    val = new NBitNumber(0xffff_ffff_f000L | val.val, 48); // handle signed right shift
 
                 penultimateVector[j] = val;
             }
