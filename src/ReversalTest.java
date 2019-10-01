@@ -1,7 +1,6 @@
 
 import tntlutgen.*;
 
-import java.math.BigInteger;
 import java.util.*;
 
 public class ReversalTest {
@@ -10,91 +9,28 @@ public class ReversalTest {
         // Initialize our LUT and constants
         Detector.generateDetectorCircle();
 
-        NBitNumber[] lutLast = new NBitNumber[Detector.detectors.size()];
-        for (int i = 0; i < lutLast.length; i++)
-            lutLast[(i+1)%lutLast.length] = new NBitNumber(LUT.getLUTValue(i), 10);
-
-        final long a = 0x97be9f880aa9L;
-        final long b = 0xeac471130bcaL;
-        final NBitNumber[] bvec = NBitNumber.vec(24, 0x01_198a, 0xff_822e, 0xff_c780, 0xff_4bfc, 0x00_5c33, 0xff_7b71, 0x01_c5bf);
-        final NBitNumber[] m6 = NBitNumber.vec(48,
-                0xb63e_7d43_381eL,
-                0x6358_f923_3700L,
-                0x4d2a_7d3e_8316L,
-                0x2249_96be_0fb1L,
-                0x23a8_5e19_a87aL,
-                0x3a17_0e00_293dL,
-                0xff92_3748_f7acL);
-        final NBitNumber[][] mm1 = NBitNumber.mat(16, new long[][] {
-                {0x1a, 0x51, 0x10, 0x32, 0x0e, 0x16, 0x4c},
-                {0x75, 0x04, 0x2a, 0x2d, 0x14, 0x3d, 0x20},
-                {0x03, 0x4f, 0x01, 0x5c, 0x05, 0x1a, 0x08},
-                {0x12, 0x1c, 0x30, 0x35, 0x5c, 0x21, 0x21},
-                {0x2b, 0x3f, 0x44, 0x0a, 0x21, 0x12, 0x39},
-                {0x15, 0x06, 0x5b, 0x13, 0x38, 0x33, 0x0c},
-                {0x2c, 0x19, 0x06, 0x01, 0x2c, 0x41, 0x22}
-        });
-        final int[][] mm1Signs = {
-                {-1, -1, -1, +1, +1, +1, -1},
-                {-1, +1, -1, -1, -1, -1, -1},
-                {+1, +1, +1, +1, +1, +1, +1},
-                {+1, +1, +1, +1, -1, -1, -1},
-                {+1, +1, -1, -1, +1, +1, -1},
-                {-1, -1, +1, -1, +1, +1, -1},
-                {-1, +1, -1, -1, -1, +1, +1}
-        };
+        NBitNumber[] lut = new NBitNumber[Detector.detectors.size()];
+        for (int i = 0; i < lut.length; i++)
+            lut[i] = new NBitNumber(LUT.getLUTValue(i), 10);
 
         int failcount = 0;
         for (int i = 0;i<10000000; i++) {
             // Give ourselvevs something to reverse
             Random rand = new Random();
-            int[] detectorArray = new int[7];
-            for (int j = 0; j < 7; j++) {
-                rand = new Random((((((MessMath.getSeed(rand)*a+b)- 0xbL) * 0xdfe05bcb1365L)- 0xbL) * 0xdfe05bcb1365L)^0x5deece66dL);
-                detectorArray[j] = TntSimulator.getDetectorOutput(rand.nextDouble() * 2 * Math.PI);
-            }
-            NBitNumber[] lutOut = new NBitNumber[7];
-            for (int k = 0; k < 7; k++) {
-                int detectorId = detectorArray[k];
-                lutOut[k] = lutLast[detectorId];
-            }
+            long seed = Reverser.reverse(rand, lut, false);
 
-            NBitNumber[] penultimateVector = new NBitNumber[7];
-            for (int j = 0; j < 7; j++) {
-                // initialize to bvec
-                NBitNumber val = bvec[j];
-                // add to val the dot product of lutOut with column j of mm1
-                for (int k = 0; k < 7; k++) {
-                    NBitNumber product = lutOut[k].mul(mm1[k][j], 24);
-                    if (mm1Signs[k][j] < 0) // handle signed product when increasing bit count; only mm1 is signed
-                        product = new NBitNumber(0xffffff, 24).sub(product, 24);
-                    val = val.add(product, 24);
-                }
-                val = val.shiftRight(48 - LUT.BITS_IGNORED, 48);
-                // In reality val is currently 14-bit
-                // Although we're using 24-bit val before the shift, in reality it's 21-bit which means we can
-                // test the whole of the top hex digit after the shift for negativity.
-                if ((val.val & 0xf000) != 0) // is val negative?
-                    val = new NBitNumber(0xffff_ffff_f000L | val.val, 48); // handle signed right shift
-
-                penultimateVector[j] = val;
-            }
-
-            NBitNumber seed = MessMath.dot(m6, penultimateVector, 48);
-
-            if (MessMath.circularDiff(seed.val, MessMath.getSeed(rand)) != 0) {
+            if (MessMath.circularDiff(seed, MessMath.getSeed(rand)) != 0) {
                 failcount+=1;
-                System.out.println("Expected: " + MessMath.getSeed(rand) + ", actual: " + seed.val);
-                System.out.println("Diff: " + MessMath.circularDiff(seed.val, MessMath.getSeed(rand)));
+                System.out.println("Expected: " + MessMath.getSeed(rand) + ", actual: " + seed);
+                System.out.println("Diff: " + MessMath.circularDiff(seed, MessMath.getSeed(rand)));
                 System.out.println(i);
-                System.out.println(Arrays.toString(detectorArray));
             }
             if (i%100000==0) {
                 System.out.println(i);
             }
 
         }
-        System.out.println(failcount);
+        System.out.println("Fail count: " + failcount);
 
     }
 
