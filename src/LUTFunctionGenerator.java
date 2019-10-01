@@ -1,6 +1,9 @@
 import tntlutgen.Detector;
 import tntlutgen.LUT;
 
+/**
+ * Prints an {@code mcfunction} to stdout to generate the observers in the lookup table in-game
+ */
 public class LUTFunctionGenerator {
 
     public static void main(String[] args) {

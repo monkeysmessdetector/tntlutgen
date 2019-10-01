@@ -2,6 +2,11 @@ import tntlutgen.Detector;
 import tntlutgen.LUT;
 import tntlutgen.MessMath;
 
+/**
+ * Prints the lookup table to stdout, and the log2 of the lut values, and the lower bound before it.
+ * Also prints useful statistics about the lookup table, useful for fine-tuning the constants in
+ * {@link tntlutgen.TntSimulator}
+ */
 public class EchoLUT {
 
     public static void main(String[] args) {

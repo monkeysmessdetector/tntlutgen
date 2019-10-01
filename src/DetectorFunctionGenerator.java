@@ -4,6 +4,10 @@ import tntlutgen.TntSimulator;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Prints an {@code mcfunction} to stdout to generate the circle of detectors, and the circle base,
+ * according to the current {@link TntSimulator} settings
+ */
 public class DetectorFunctionGenerator {
 
     public static void main(String[] args) {

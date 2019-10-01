@@ -3,6 +3,10 @@ import tntlutgen.*;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * Traces what reversal is supposed to look like for the given seed.
+ * Used extensively for debugging the mess detector.
+ */
 public class ReversalTraceTool {
 
     public static void main(String[] args) {

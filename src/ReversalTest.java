@@ -3,6 +3,9 @@ import tntlutgen.*;
 
 import java.util.*;
 
+/**
+ * Tests whether the (code version of) {@link Reverser} is working properly
+ */
 public class ReversalTest {
 
     public static void main(String[] args) {
